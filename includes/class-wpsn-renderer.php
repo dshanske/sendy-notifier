@@ -28,8 +28,15 @@ class WPSN_Renderer {
 					$t = get_the_title( $post_id );
 					if ( $thumb ) {
 						$html .= "<table width='100%'><tr>$thumb<td valign='top'><h3><a href='" . get_permalink( $post_id ) . "'>" . esc_html( $t ) . '</a></h3></td></tr></table>';
-						$thumb = ''; } else {
-						$html .= "<h3><a href='" . get_permalink( $post_id ) . "'>" . esc_html( $t ) . '</a></h3>'; }
+						$thumb = '';
+					} else {
+						$html .= "<h3><a href='" . get_permalink( $post_id ) . "'>" . esc_html( $t ) . '</a></h3>';
+					}
+					break;
+				case 'description':
+					if ( ! empty( get_post_meta( $post_id, 'cpseo_description', true ) ) ) {
+						$html .= "<p style='color:#444; font-size:14px;'>" . wp_kses_post( get_post_meta( $post_id, 'cpseo_description', true ) ) . '</p>';
+					}
 					break;
 				case 'excerpt':
 					if ( has_excerpt( $post_id ) ) {

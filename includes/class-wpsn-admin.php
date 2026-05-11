@@ -192,6 +192,7 @@ class WPSN_Admin {
 									'title'      => 'Title',
 									'date'       => 'Date',
 									'author'     => 'Author',
+									'decription' => 'Description',
 									'excerpt'    => 'Excerpt',
 									'content'    => 'Content',
 									'categories' => 'Categories',
