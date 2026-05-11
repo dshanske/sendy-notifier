@@ -41,7 +41,7 @@ class WPSN_Core {
 	public function sync_cron_schedule() {
 		wp_clear_scheduled_hook( 'wpsn_scheduled_digest' );
 		$delivery_frequency = get_option( 'wpsn_frequency', 'immediate' );
-		
+
 		if ( in_array( $delivery_frequency, array( 'immediate', 'manual' ), true ) ) {
 			return;
 		}
@@ -64,7 +64,7 @@ class WPSN_Core {
 			if ( get_post_meta( $post->ID, '_wpsn_send_flag', true ) === 'no' ) {
 				return;
 			}
-			
+
 			$frequency = get_option( 'wpsn_frequency', 'immediate' );
 			if ( 'immediate' === $frequency ) {
 				$this->transmit_payload( array( $post->ID ) );
@@ -92,7 +92,7 @@ class WPSN_Core {
 	 */
 	public function transmit_payload( $post_ids ) {
 		self::$is_preparing_email = true;
-		
+
 		$api_url = rtrim( get_option( 'wpsn_url' ), '/ ' );
 		$api_key = trim( get_option( 'wpsn_api_key' ) );
 		$list_id = get_option( 'wpsn_list_id' );
@@ -104,7 +104,7 @@ class WPSN_Core {
 		$from_email = get_option( 'wpsn_from_email' ) ?: get_option( 'admin_email' );
 		$site_name  = get_bloginfo( 'name' );
 
-		$renderer = new WPSN_Renderer();
+		$renderer     = new WPSN_Renderer();
 		$content_html = '';
 		foreach ( $post_ids as $id ) {
 			$content_html .= $renderer->render_post_row( $id );
@@ -120,31 +120,34 @@ class WPSN_Core {
 
 		$final_body = $renderer->wrap_in_shell( $content_html, $subject );
 
-		$response = wp_remote_post( $api_url . '/api/campaigns/create.php', array(
-			'timeout' => 45,
-			'body'    => array(
-				'api_key'       => $api_key,
-				'from_name'     => $site_name,
-				'from_email'    => $from_email,
-				'reply_to'      => $from_email,
-				'title'         => $subject,
-				'subject'       => $subject,
-				'html_text'     => $final_body,
-				'list_ids'      => $list_id,
-				'brand_id'      => get_option( 'wpsn_brand_id' ),
-				'query_string'  => get_option( 'wpsn_query_string' ),
-				'track_opens'   => get_option( 'wpsn_track_opens', '1' ),
-				'track_clicks'  => get_option( 'wpsn_track_clicks', '1' ),
-				'send_campaign' => 1
+		$response = wp_remote_post(
+			$api_url . '/api/campaigns/create.php',
+			array(
+				'timeout' => 45,
+				'body'    => array(
+					'api_key'       => $api_key,
+					'from_name'     => $site_name,
+					'from_email'    => $from_email,
+					'reply_to'      => $from_email,
+					'title'         => $subject,
+					'subject'       => $subject,
+					'html_text'     => $final_body,
+					'list_ids'      => $list_id,
+					'brand_id'      => get_option( 'wpsn_brand_id' ),
+					'query_string'  => get_option( 'wpsn_query_string' ),
+					'track_opens'   => get_option( 'wpsn_track_opens', '1' ),
+					'track_clicks'  => get_option( 'wpsn_track_clicks', '1' ),
+					'send_campaign' => 1,
+				),
 			)
-		));
+		);
 
 		self::$is_preparing_email = false;
 		if ( is_wp_error( $response ) ) {
 			return $response->get_error_message();
 		}
 
-		$body = trim( wp_remote_retrieve_body( $response ) );
+		$body       = trim( wp_remote_retrieve_body( $response ) );
 		$is_success = in_array( $body, array( 'Campaign created', 'Campaign created and now sending' ), true );
 
 		if ( $is_success ) {
