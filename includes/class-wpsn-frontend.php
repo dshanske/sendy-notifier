@@ -57,7 +57,7 @@ class WPSN_Frontend {
 				e.preventDefault();
 				var f = jQuery(this);
 				var msg_container = f.find('.wpsn-m');
-					$.post('<?php echo admin_url( 'admin-ajax.php' ); ?>', {
+					jQuery.post('<?php echo admin_url( 'admin-ajax.php' ); ?>', {
 						action: 'wpsn_subscribe',
 								name: f.find('input[name="name"]').val(),
 									email: f.find('input[name="email"]').val()
