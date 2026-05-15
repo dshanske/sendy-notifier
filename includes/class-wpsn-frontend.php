@@ -55,14 +55,21 @@ class WPSN_Frontend {
 		<script>
 		jQuery(document).on('submit', '.wpsn-af', function(e) {
 				e.preventDefault();
-					var f = jQuery(this);
+				var f = jQuery(this);
+				var msg_container = f.find('.wpsn-m');
 					$.post('<?php echo admin_url( 'admin-ajax.php' ); ?>', {
 						action: 'wpsn_subscribe',
 								name: f.find('input[name="name"]').val(),
 									email: f.find('input[name="email"]').val()
 									}, function(r) {
-												f.find('.sn-m').text(r.data);
-												});
+										f.find('.sn-m').text(r.data);
+										if(r.success) {
+											msg_container.css('color', '#22c55e').html(r.data); // Green
+											f[0].reset();
+										} else {
+											msg_container.css('color', '#ef4444').html(r.data); // Red
+										}
+									});
 		});
 		</script>
 		<?php
