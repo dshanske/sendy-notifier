@@ -51,7 +51,21 @@ class WPSN_Frontend {
 			<?php
 		}
 
-		echo "<script>jQuery(document).on('submit','.wpsn-af',function(e){ e.preventDefault(); var f=jQuery(this); $.post('" . admin_url( 'admin-ajax.php' ) . "',{action:'wpsn_subscribe',name:f.find('input[name=\"name\"]').val(),email:f.find('input[name=\"email\"]').val()},function(r){ f.find('.wpsn-m').text(r.data); }); });</script>";
+		?>
+		<script>
+		jQuery(document).on('submit', '.wpsn-af', function(e) {
+				e.preventDefault();
+					var f = jQuery(this);
+					$.post('<?php echo admin_url( 'admin-ajax.php' ); ?>', {
+						action: 'wpsn_subscribe',
+								name: f.find('input[name="name"]').val(),
+									email: f.find('input[name="email"]').val()
+									}, function(r) {
+												f.find('.sn-m').text(r.data);
+												});
+		});
+		</script>
+		<?php
 	}
 
 	public function ajax_subscribe() {
